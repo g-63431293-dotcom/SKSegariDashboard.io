@@ -34,7 +34,10 @@
 <meta name="twitter:image" content="https://g-63431293-dotcom.github.io/SKSegariDashboard.io/icons/og-image.png">
 <style>
 html,body{margin:0;height:100%;background:#0f2b46;font-family:system-ui,sans-serif}
-#f{border:0;width:100%;display:block;position:fixed;left:0;right:0;top:env(safe-area-inset-top);bottom:env(safe-area-inset-bottom);height:auto;background:#fff}
+#f{border:0;display:block;position:fixed;left:0;width:100%;background:#fff;
+   top:env(safe-area-inset-top,0px);
+   height:calc(100% - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));       /* iframe ialah elemen "replaced": top+bottom sahaja TIDAK meregangkannya (jatuh ke 150px), tinggi mesti dinyatakan */
+   height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
 #off{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;padding:20px}
 #off img{width:96px;border-radius:20px;margin-bottom:12px}
 </style>
