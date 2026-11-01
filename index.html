@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dashboard SK Segari</title>
+<meta name="description" content="Dashboard data Sekolah Kebangsaan Segari: sekolah, guru, murid, DELIMa dan JQAF">
+<link rel="manifest" href="manifest.webmanifest">
+<!-- Ikon tab / pintasan: logo sekolah -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+<meta name="theme-color" content="#0f2b46">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SK Segari">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="application-name" content="SK Segari">
+<!-- Pratonton apabila pautan dikongsi (WhatsApp, Telegram, Facebook) — GANTI https://g-63431293-dotcom.github.io/SKSegariDashboard.io/ dengan URL penuh folder ini, berakhir "/" -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SK Segari">
+<meta property="og:title" content="Dashboard SK Segari">
+<meta property="og:description" content="Data sekolah, guru, murid, DELIMa dan JQAF — Berilmu Beriman">
+<meta property="og:url" content="https://g-63431293-dotcom.github.io/SKSegariDashboard.io/">
+<meta property="og:image" content="https://g-63431293-dotcom.github.io/SKSegariDashboard.io/icons/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://g-63431293-dotcom.github.io/SKSegariDashboard.io/icons/og-image.png">
+<style>
+html,body{margin:0;height:100%;background:#0f2b46;font-family:system-ui,sans-serif}
+#f{border:0;width:100%;display:block;position:fixed;left:0;right:0;top:env(safe-area-inset-top);bottom:env(safe-area-inset-bottom);height:auto;background:#fff}
+#off{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;padding:20px}
+#off img{width:96px;border-radius:20px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<iframe id="f" title="Dashboard SK Segari" allow="fullscreen"></iframe>
+<div id="off"><img src="icons/icon-192.png" alt=""><h2>Tiada sambungan internet</h2><p>Sambung semula untuk melihat data terkini.</p><button onclick="location.reload()">Cuba lagi</button></div>
+<script>
+// GANTI dengan URL web app tunggal (hujung /exec) selepas deploy
+const APP_URL = 'GANTI_URL_EXEC';
+const q = new URLSearchParams(location.search), p = new URLSearchParams();
+p.set('wrap', '1');                                           // beritahu aplikasi ia berjalan dalam pembalut ini
+if (q.get('r')) p.set('r', q.get('r'));
+if (q.has('login')) p.set('login', '1');
+// Google Sign-In kembali ke halaman ini dengan #id_token=… → hantar kepada aplikasi di dalam iframe, kemudian buang daripada bar alamat
+const back = /(^|[#&])id_token=/.test(location.hash) ? location.hash : '';
+if (back) history.replaceState(null, '', location.pathname + location.search);
+if (!navigator.onLine) { document.getElementById('off').style.display = 'flex'; }
+else { document.getElementById('f').src = APP_URL + '?' + p.toString() + back; }
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+// ===== Pasang aplikasi: perantara antara butang "Pasang aplikasi" dalam dashboard (iframe) dan pelayar =====
+// beforeinstallprompt hanya dihantar kepada halaman peringkat atas ini, bukan kepada iframe; dashboard bertanya melalui postMessage.
+let dp = null, sink = null, justInstalled = false;
+const standalone = () => ['standalone', 'minimal-ui', 'fullscreen'].some(m => matchMedia('(display-mode: ' + m + ')').matches) || navigator.standalone === true;
+const stateMsg = () => ({ type: 'sk-install-state', can: !!dp, standalone: standalone() || justInstalled, justInstalled: justInstalled });
+const push = () => { if (sink) try { sink.postMessage(stateMsg(), '*'); } catch (e) {} };
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); dp = e; push(); });
+addEventListener('appinstalled', () => { dp = null; justInstalled = true; push(); });
+addEventListener('message', async e => {
+  const m = e.data || {};
+  if (m.type === 'sk-install-query') { sink = e.source; push(); }
+  else if (m.type === 'sk-install' && dp) {                      // klik pengguna dalam iframe memberi pengaktifan kepada halaman ini
+    sink = e.source; const p = dp; dp = null;
+    try { p.prompt(); await p.userChoice; } catch (x) {}
+    push();
+  }
+});
+</script>
+</body>
+</html>
