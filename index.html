@@ -44,7 +44,7 @@ html,body{margin:0;height:100%;background:#0f2b46;font-family:system-ui,sans-ser
 <div id="off"><img src="icons/icon-192.png" alt=""><h2>Tiada sambungan internet</h2><p>Sambung semula untuk melihat data terkini.</p><button onclick="location.reload()">Cuba lagi</button></div>
 <script>
 // GANTI dengan URL web app tunggal (hujung /exec) selepas deploy
-const APP_URL = 'GANTI_URL_EXEC';
+const APP_URL = 'https://script.google.com/macros/s/AKfycbx-EGIVDGrOAlPzqSnpjWk_qspy2Jjype-6_Wp1yZuASR66OTHM29l3LwCm1DcXo_yy5A/exec';
 const q = new URLSearchParams(location.search), p = new URLSearchParams();
 p.set('wrap', '1');                                           // beritahu aplikasi ia berjalan dalam pembalut ini
 if (q.get('r')) p.set('r', q.get('r'));
